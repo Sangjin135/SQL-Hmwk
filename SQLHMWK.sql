@@ -57,7 +57,8 @@ update actor
 set first_name = 'Groucho'
 where actor_id = 172;
 
--- 5a
+-- 5
+create table address
 
 -- 6a
 select address.address, address.address_id, staff.first_name, staff.last_name
@@ -90,5 +91,100 @@ group by customer.customer_id
 order by customer.last_name asc;
 
 -- 7a
+select film.title, language.name
+from film join language
+on film.language_id = language.language_id
+where (film.title like 'K%' or film.title like 'Q%') and film.language_id = 1;
+
+-- 7b
+select film.title, film.film_id, actor.first_name, actor.last_name, actor.actor_id
+from film join film_actor
+on film.film_id = film_actor.film_id
+join actor
+on film_actor.actor_id = actor.actor_id
+where film.title = 'Alone Trip';
+
+-- 7c
+select customer.first_name, customer.last_name, customer.email, country.country
+from customer join address
+on customer.address_id = address.address_id
+join city
+on address.city_id = city.city_id
+join country
+on city.country_id = country.country_id
+where country.country = 'Canada';
+
+-- 7d
+select film.title, category.name
+from film join film_category
+on film.film_id = film_category.film_id
+join category
+on film_category.category_id = category.category_id
+where category.name = 'Family';
+
+-- 7e
+select film.title, count(rental.rental_id)
+from film join inventory
+on film.film_id = inventory.film_id
+join rental 
+on rental.inventory_id = inventory.inventory_id
+group by film.title
+order by count(rental.rental_id) DESC;
+
+-- 7f
+select customer.first_name, customer.last_name, sum(payment.amount)
+from customer join payment
+on customer.customer_id = payment.customer_id
+group by payment.customer_id
+order by customer.last_name Asc;
+
+-- 7g
+select store.store_id, city.city, country.country
+from store join address
+on store.address_id = address.address_id
+join city
+on city.city_id = address.city_id
+join country
+on country.country_id = city.country_id;
+
+-- 7h
+select category.name, sum(payment.amount) as GrossRevenue
+from film join inventory
+on inventory.film_id =  film.film_id
+JOIN film_category 
+ON film_category.film_id = film.film_id
+JOIN category 
+ON category.category_id = film_category.category_id
+JOIN rental 
+ON rental.inventory_id = inventory.inventory_id
+JOIN payment 
+ON rental.rental_id = payment.rental_id
+GROUP BY category.name 
+ORDER BY sum(payment.amount) DESC 
+LIMIT 5;
+
+-- 8a
+create view Genre_Dashboard as
+select category.name, sum(payment.amount) as GrossRevenue
+from film join inventory
+on inventory.film_id =  film.film_id
+JOIN film_category 
+ON film_category.film_id = film.film_id
+JOIN category 
+ON category.category_id = film_category.category_id
+JOIN rental 
+ON rental.inventory_id = inventory.inventory_id
+JOIN payment 
+ON rental.rental_id = payment.rental_id
+GROUP BY category.name 
+ORDER BY sum(payment.amount) DESC 
+LIMIT 5;
+
+-- 8b
+select * from Genre_Dashboard;
+
+-- 8c
+drop view Genre_Dashboard;
+
 
 
